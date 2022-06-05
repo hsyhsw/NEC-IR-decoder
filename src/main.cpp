@@ -124,13 +124,13 @@ bool decodeStream(uint8_t *addr, uint8_t *data) {
     while (idx != -1 && !streamTimer.expired()) {
         // try consume trailing mark edge
         if (consumeBurstMarkEdge()) {
-            // we have 'burst': 1
-            raw |= (((uint32_t) 1) << idx--);
+            // we have 'burst': 0
+            --idx;
             BLINK_CH4();
             consumeBurstRemaining();
         } else {
-            // we have 'space': 0
-            --idx;
+            // we have 'space': 1
+            raw |= (((uint32_t) 1) << idx--);
             BLINK_CH4();
             RETAIN_NMARK_OR_FAIL(700); // consume remaining 'space'
             CONSUME_BURST_OR_FAIL();
