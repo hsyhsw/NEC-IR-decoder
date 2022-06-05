@@ -13,9 +13,12 @@ Suggested circuit is as follows.
 
 Here is the impleneted decoding scheme.
 (yellow for analog IR input, blue for wait event, green for data detection)
+
+**Note that yellow and green traces are shwon inverted!**
+
 - Detecting a leading pulse
 ![leading pulse](./leading_pulse.png)
-- Data decoding
+- Data (address / command) decoding
 ![data](./pulse_space.png)
 
 Monitoring UART serial port from the USB connection prints the decoded address and data.
