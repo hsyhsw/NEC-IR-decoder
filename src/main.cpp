@@ -5,7 +5,11 @@
 
 #define IR_INPUT_PIN PIND6
 
+
 #define IR_THRESHOLD_LOW (192)
+/**
+ * Sparkfun pro micro has 10-bit ADC
+ */
 #define IR_THRESHOLD_HIGH (1024-IR_THRESHOLD_LOW)
 
 #define SCOPE_DEBUG
@@ -13,7 +17,7 @@
 #define CH3_OUT_PIN A1
 #define CH4_OUT_PIN A2
 /**
- * blinky for time-bound polling.
+ * blinky for time-bounded polling.
  * viewable only through a scope. (see attached screenshot)
  */
 #define BLINK_CH3() digitalWriteFast(CH3_OUT_PIN, HIGH); digitalWriteFast(CH3_OUT_PIN, LOW);
@@ -23,6 +27,9 @@
  */
 #define BLINK_CH4() digitalWriteFast(CH4_OUT_PIN, HIGH); digitalWriteFast(CH4_OUT_PIN, LOW);
 #else
+/**
+ * Replaces 2 instructions from a 'blink' call.
+ */
 #define BLINK_CH3() asm volatile("nop\n nop\n")
 #define BLINK_CH4() asm volatile("nop\n nop\n")
 #endif
@@ -84,6 +91,12 @@ bool waitMark(unsigned int window = 300) {
 #define RETAIN_NMARK_OR_FAIL(DURATION) TIME_BOUNDED_LOOP(traceTimer, DURATION) {if (isMark()) {return false;}}
 #define RETAIN_MARK_OR_FAIL(DURATION) TIME_BOUNDED_LOOP(traceTimer, DURATION) {if (isNMark()) {return false;}}
 
+/**
+ * consume leading burst
+ * |------|
+ * |      |
+ * |      |___
+ */
 bool waitLeadingBurst() {
     // wait 9ms one, 4.5ms zero
     WAIT_MARK_OR_FAIL(900);
@@ -93,11 +106,23 @@ bool waitLeadingBurst() {
     return true;
 }
 
+/**
+ * consume part of a burst
+ * |
+ * |
+ * |
+ */
 bool consumeBurstMarkEdge() {
     WAIT_MARK_OR_FAIL(300);
     return true;
 }
 
+/**
+ * consume part of a burst
+ * --|
+ *   |
+ *   |__
+ */
 bool consumeBurstRemaining() {
     RETAIN_MARK_OR_FAIL(150);
     WAIT_NMARK_OR_FAIL(300);
@@ -105,6 +130,12 @@ bool consumeBurstRemaining() {
     return true;
 }
 
+/**
+ * consume a burst
+ * |--|
+ * |  |
+ * |  |__
+ */
 #define CONSUME_BURST_OR_FAIL() if (!consumeBurstMarkEdge() || !consumeBurstRemaining()) {return false;}
 
 inline bool checkIntegrity(const uint8_t v, const uint8_t vInv) {
@@ -180,5 +211,5 @@ void loop() {
         Serial.println();
     }
 
-    delay(100);
+    delay(100); // FIXME: this causes long dead time...
 }

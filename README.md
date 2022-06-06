@@ -11,7 +11,7 @@ Suggested circuit is as follows.
 
 ![circuit](./circuit.svg)
 
-Here is the impleneted decoding scheme.
+Here is the implemented decoding scheme.
 (yellow for analog IR input, blue for wait event, green for data detection)
 
 **Note that yellow and green traces are shwon inverted!**
@@ -21,7 +21,7 @@ Here is the impleneted decoding scheme.
 - Data (address / command) decoding
 ![data](./pulse_space.png)
 
-Monitoring UART serial port from the USB connection prints the decoded address and data.
+Monitoring serial port from the USB connection prints the decoded address and data.
 
 ```
 55.62ms spent for stream decoding.
